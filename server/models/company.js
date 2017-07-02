@@ -1,16 +1,37 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
-  var Company = sequelize.define('Company', {
-    name: DataTypes.STRING,
-    creator_id: DataTypes.INTEGER,
-    description: DataTypes.TEXT,
-    logo_url: DataTypes.STRING
+module.exports = function (sequelize, DataTypes) {
+  const Company = sequelize.define('Company', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    creator_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+    },
+    logo_url: {
+      type: DataTypes.STRING,
+    },
   }, {
     classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
+      associate(models) {
+        Company.belongsTo(models.User, {
+          foreignKey: 'creator_id',
+        });
+        Company.belongsToMany(models.User, {
+          as: 'members',
+          through: 'memberships',
+          foreignKey: 'company_id',
+        });
+        Company.belongsToMany(models.User, {
+          as: 'admins',
+          through: 'administratings',
+          foreignKey: 'company_id',
+        });
+      },
+    },
   });
   return Company;
 };

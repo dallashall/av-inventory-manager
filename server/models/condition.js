@@ -1,15 +1,26 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
-  var Condition = sequelize.define('Condition', {
-    name: DataTypes.STRING,
-    symbol: DataTypes.STRING,
-    color: DataTypes.STRING
+module.exports = function defineCondition(sequelize, DataTypes) {
+  const Condition = sequelize.define('Condition', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    symbol:{
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    color: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }, {
     classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
+      associate(models) {
+        Condition.hasMany(models.Item, {
+          foreignKey: 'condition_id',
+          as: 'items',
+        });
+      },
+    },
   });
   return Condition;
 };

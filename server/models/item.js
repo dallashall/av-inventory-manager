@@ -1,17 +1,33 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
-  var Item = sequelize.define('Item', {
-    name: DataTypes.STRING,
-    desc: DataTypes.TEXT,
-    unique_num: DataTypes.INTEGER,
-    condition_id: DataTypes.INTEGER,
-    creator_id: DataTypes.INTEGER
+module.exports = function defineItem(sequelize, DataTypes) {
+  const Item = sequelize.define('Item', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    desc: {
+      type: DataTypes.TEXT,
+    },
+    unique_num: {
+      type: DataTypes.INTEGER,
+    },
+    condition_id: {
+      type: DataTypes.STRING,
+    },
+    creator_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   }, {
     classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
+      associate(models) {
+        Item.belongsTo(models.User, {
+          foreignKey: 'creator_id',
+        });
+        Item.belongsTo(models.Condition, {
+          foreignKey: 'condition_id',
+        });
+      },
+    },
   });
   return Item;
 };
