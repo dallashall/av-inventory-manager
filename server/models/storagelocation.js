@@ -1,4 +1,4 @@
-module.exports = function (sequelize, DataTypes) {
+module.exports = function defineStorageLocation(sequelize, DataTypes) {
   const StorageLocation = sequelize.define('StorageLocation', {
     short_description: {
       type: DataTypes.STRING,
