@@ -1,36 +1,37 @@
-'use strict';
 module.exports = {
-  up: function(queryInterface, Sequelize) {
+  up(queryInterface, Sequelize) {
     return queryInterface.createTable('Companies', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       creator_id: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.INTEGER,
       },
       description: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       logo_url: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
-  down: function(queryInterface, Sequelize) {
+  down(queryInterface, Sequelize) {
     return queryInterface.dropTable('Companies');
-  }
+  },
 };

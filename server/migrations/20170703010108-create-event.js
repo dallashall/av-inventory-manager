@@ -1,36 +1,18 @@
 module.exports = {
   up(queryInterface, Sequelize) {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('Events', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      username: {
+      calendar_id: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      first_name: {
+      event_id: {
         allowNull: false,
-        type: Sequelize.STRING,
-      },
-      last_name: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      email: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      password_digest: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      phone: {
-        type: Sequelize.INTEGER,
-      },
-      profile_img_url: {
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -44,6 +26,6 @@ module.exports = {
     });
   },
   down(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Users');
+    return queryInterface.dropTable('Events');
   },
 };

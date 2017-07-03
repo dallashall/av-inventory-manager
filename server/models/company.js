@@ -30,6 +30,20 @@ module.exports = function (sequelize, DataTypes) {
           through: 'administratings',
           foreignKey: 'company_id',
         });
+        Company.belongsToMany(models.User, {
+          as: 'inventoryManagers',
+          through: 'inventoryManagemehts',
+          foreignKey: 'company_id',
+        });
+        Company.belongsToMany(models.User, {
+          as: 'scheduleManagers',
+          through: 'scheduleyManagemehts',
+          foreignKey: 'company_id',
+        });
+        Company.hasMany(models.StorageLocation, {
+          as: 'storageLocations',
+          foreignKey: 'company_id',
+        });
       },
     },
   });

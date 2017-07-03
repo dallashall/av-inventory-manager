@@ -47,6 +47,36 @@ module.exports = function defineUser(sequelize, DataTypes) {
           through: 'administratings',
           foreignKey: 'user_id',
         });
+        User.belongsToMany(models.Company, {
+          as: 'managedCompanies',
+          through: 'inventoryManagements',
+          foreignKey: 'user_id',
+        });
+        User.belongsToMany(models.Company, {
+          as: 'scheduleCompanies',
+          through: 'scheduleManagements',
+          foreignKey: 'user_id',
+        });
+        User.belongsToMany(models.Event, {
+          as: 'potentialEvents',
+          through: 'volunteering',
+          foreignKey: 'user_id',
+        });
+        User.belongsToMany(models.Event, {
+          as: 'assignedEvents',
+          through: 'assignments',
+          foreignKey: 'user_id',
+        });
+        User.hasMany(models.Use, {
+          as: 'checkouts',
+          through: models.Use,
+          foreignKey: 'checkout_person_id',
+        });
+        User.hasMany(models.Use, {
+          as: 'checkins',
+          through: models.Use,
+          foreignKey: 'checkin_person_id',
+        });
       },
     },
   });
