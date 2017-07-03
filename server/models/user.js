@@ -1,9 +1,5 @@
 module.exports = function defineUser(sequelize, DataTypes) {
   const User = sequelize.define('User', {
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     first_name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -16,12 +12,9 @@ module.exports = function defineUser(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    password_digest: {
+    refresh_token: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    phone: {
-      type: DataTypes.INTEGER,
     },
     profile_img_url: {
       type: DataTypes.STRING,

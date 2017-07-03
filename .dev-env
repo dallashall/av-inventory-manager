@@ -4,3 +4,6 @@ DB_PASSWORD=password
 DB_NAME=database_name
 DB_HOST=database_host_uri
 DB_PORT=database_port
+CLIENT_ID=
+CLIENT_SECRET=
+REDIRECT_URL=
