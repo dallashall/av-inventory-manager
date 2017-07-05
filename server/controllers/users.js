@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/index').User;
 const google = require('googleapis');
 
@@ -24,22 +24,32 @@ const googleUrl = oauth2Client.generateAuthUrl({
   scope: scopes,
 });
 
+const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken) {
+  const newUser = {
+    first_name: googleUser.name.givenName,
+    last_name: googleUser.name.familyName,
+    email: googleUser.emails[0].value,
+    refresh_token: refreshToken,
+    profile_img_url: googleUser.image.url,
+  };
+
+  User.findOrCreate({
+    where: { email: googleUser.emails[0].value },
+    defaults: newUser,
+  })
+    .spread((user, created) => {
+      const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET);
+      res.status(200).send(token);
+    });
+};
+
 const retreiveGoogleUser = function retreiveGoogleUser(res, refreshToken) {
   plus.people.get({
     userId: 'me',
     auth: oauth2Client,
   }, (err, googleUser) => {
     console.log(googleUser);
-    const newUser = {
-      first_name: googleUser.name.givenName,
-      last_name: googleUser.name.familyName,
-      email: googleUser.emails[0].value,
-      refresh_token: refreshToken,
-      profile_img_url: googleUser.image.url,
-    };
-    return User.create(newUser)
-      .then(user => res.status(201).send(user)) // Change this
-      .catch(error => res.status(400).send(error));
+    return findOrCreateUser(res, googleUser, refreshToken);
   });
 };
 
