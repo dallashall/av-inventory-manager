@@ -39,7 +39,14 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken
   })
     .spread((user, created) => {
       const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET);
-      res.status(200).send(token);
+      res.status(200).send({
+        token,
+        user: {
+          id: user.id,
+          displayName: `${user.first_name} ${user.last_name}`,
+          profile_img_url: user.profile_image_url,
+        },
+      });
     });
 };
 
