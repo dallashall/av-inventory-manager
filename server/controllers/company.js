@@ -18,4 +18,23 @@ module.exports = {
       )
     ;
   },
+  destroy(req, res) {
+    return Company.findById(req.params.id)
+      .then(
+        company => {
+          company.destroy();
+          return res.status(201).send(company);
+        }
+      )
+      .catch(error => res.status(400).send(error));
+  },
+  read(req, res) {
+    return Company.findById(req.params.id)
+      .then(
+        company => res.status(201).send(company),
+        error => res.status(400).send(error)
+      );
+  },
 };
+
+// TODO: Dry up error callback
