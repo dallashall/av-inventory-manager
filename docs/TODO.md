@@ -33,6 +33,10 @@
 - [ ] uses
 - [ ] subscriptions
 
+### Routes
+- [x] ~~Protect based on JWT from auth~~ (Temporarily disabled for local tests)
+- [ ] Protect based on subscription (integrate into initial signin)
+
 ---
 ## Mobile
 
