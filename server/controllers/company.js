@@ -15,13 +15,12 @@ module.exports = {
           .then(company => res.status(201).send(company))
           .catch(error => res.status(400).send(error)),
         error => res.status(400).send(error)
-      )
-    ;
+      );
   },
   destroy(req, res) {
     return Company.findById(req.params.id)
       .then(
-        company => {
+        (company) => {
           company.destroy();
           return res.status(201).send(company);
         }
