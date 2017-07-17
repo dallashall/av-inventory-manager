@@ -38,7 +38,7 @@
 
 ### Components
 - [x] **~~Native Google Play Services login (Android)~~**
-- [x] **Native Google Play Services login/web login (iOS)**
+- [-] **Native Google Play Services login/web login (iOS)**
 - [ ] **Event List**
   - [ ] Events Assigned to user
   - [ ] Unfilled events
