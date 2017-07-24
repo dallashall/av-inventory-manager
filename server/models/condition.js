@@ -12,15 +12,12 @@ module.exports = function defineCondition(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        Condition.hasMany(models.Item, {
-          foreignKey: 'condition_id',
-          as: 'items',
-        });
-      },
-    },
   });
+  Condition.associate = (models) => {
+    Condition.hasMany(models.Item, {
+      foreignKey: 'condition_id',
+      as: 'items',
+    });
+  };
   return Condition;
 };

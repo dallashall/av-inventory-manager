@@ -12,6 +12,10 @@ module.exports = function defineUser(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    phone: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     refresh_token: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -19,59 +23,54 @@ module.exports = function defineUser(sequelize, DataTypes) {
     profile_img_url: {
       type: DataTypes.STRING,
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        User.hasMany(models.Item, {
-          foreignKey: 'creator_id',
-          as: 'createdInventory',
-        });
-        User.hasMany(models.Company, {
-          foreignKey: 'creator_id',
-          as: 'createdCompanies',
-        });
-        User.belongsToMany(models.Company, {
-          as: 'companies',
-          through: 'memberships',
-          foreignKey: 'user_id',
-        });
-        User.belongsToMany(models.Company, {
-          as: 'adminCompanies',
-          through: 'administratings',
-          foreignKey: 'user_id',
-        });
-        User.belongsToMany(models.Company, {
-          as: 'managedCompanies',
-          through: 'inventoryManagements',
-          foreignKey: 'user_id',
-        });
-        User.belongsToMany(models.Company, {
-          as: 'scheduleCompanies',
-          through: 'scheduleManagements',
-          foreignKey: 'user_id',
-        });
-        User.belongsToMany(models.Event, {
-          as: 'potentialEvents',
-          through: 'volunteering',
-          foreignKey: 'user_id',
-        });
-        User.belongsToMany(models.Event, {
-          as: 'assignedEvents',
-          through: 'assignments',
-          foreignKey: 'user_id',
-        });
-        User.hasMany(models.Use, {
-          as: 'checkouts',
-          through: models.Use,
-          foreignKey: 'checkout_person_id',
-        });
-        User.hasMany(models.Use, {
-          as: 'checkins',
-          through: models.Use,
-          foreignKey: 'checkin_person_id',
-        });
-      },
-    },
-  });
+  })
+  User.associate = (models) => {
+    User.hasMany(models.Item, {
+      foreignKey: 'creator_id',
+      as: 'createdInventory',
+    });
+    User.hasMany(models.Company, {
+      foreignKey: 'creator_id',
+      as: 'createdCompanies',
+    });
+    User.belongsToMany(models.Company, {
+      as: 'companies',
+      through: 'memberships',
+      foreignKey: 'user_id',
+    });
+    User.belongsToMany(models.Company, {
+      as: 'adminCompanies',
+      through: 'administratings',
+      foreignKey: 'user_id',
+    });
+    User.belongsToMany(models.Company, {
+      as: 'managedCompanies',
+      through: 'inventoryManagements',
+      foreignKey: 'user_id',
+    });
+    User.belongsToMany(models.Company, {
+      as: 'scheduleCompanies',
+      through: 'scheduleManagements',
+      foreignKey: 'user_id',
+    });
+    User.belongsToMany(models.Event, {
+      as: 'potentialEvents',
+      through: 'volunteering',
+      foreignKey: 'user_id',
+    });
+    User.belongsToMany(models.Event, {
+      as: 'assignedEvents',
+      through: 'assignments',
+      foreignKey: 'user_id',
+    });
+    User.hasMany(models.Use, {
+      as: 'checkouts',
+      foreignKey: 'checkout_person_id',
+    });
+    User.hasMany(models.Use, {
+      as: 'checkins',
+      foreignKey: 'checkin_person_id',
+    });
+  };
   return User;
 };

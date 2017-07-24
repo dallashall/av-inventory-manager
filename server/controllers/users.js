@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/index').User;
+const { User, Company } = require('../models/index');
 const google = require('googleapis');
+
+// TODO: Move to util file and require...
+const errorCB = res => error => res.status(400).send(error);
+const successCB = res => payload => res.status(201).send(payload);
 
 const plus = google.plus('v1');
 const OAuth2 = google.auth.OAuth2;
@@ -36,9 +40,14 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken
   User.findOrCreate({
     where: { email: googleUser.emails[0].value },
     defaults: newUser,
+    include: { model: Company, as: 'adminCompanies' },
   })
     .spread((user, created) => {
-      const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET);
+      const token = jwt.sign({
+        user_id: user.id,
+        adminCompanies: user.adminCompanies.map(co => co.id),
+      }, process.env.JWT_SECRET);
+      console.log("token", token);
       res.status(200).send({
         token,
         user: {
@@ -61,12 +70,6 @@ const retreiveGoogleUser = function retreiveGoogleUser(res, refreshToken) {
 };
 
 module.exports = {
-  create(req, res) {
-    const formattedUser = Object.assign({}, reqUser, { password: 'password' }, { password_digest });
-    return User.create(formattedUser)
-      .then(user => res.status(201).send(user)) // Change this
-      .catch(error => res.status(400).send(error));
-  },
   signupWithGoogle(req, res) {
     res.redirect(googleUrl);
   },
@@ -80,5 +83,17 @@ module.exports = {
         return retreiveGoogleUser(res, tokens.refresh_token);
       }
     });
+  },
+  edit(req, res) {
+    const userId = req.user.user_id;
+    const userData = req.body.user;
+    console.log("userData", userData);
+    console.log("userId", userId);
+    User.findById(userId)
+      .then(
+        oldUser => oldUser.update(userData, { fields: ['phone'] })
+          .then(successCB(res))
+          .catch(errorCB(res)))
+      .catch(errorCB(res));
   },
 };

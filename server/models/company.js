@@ -14,38 +14,35 @@ module.exports = function defineCompany(sequelize, DataTypes) {
     logo_url: {
       type: DataTypes.STRING,
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        Company.belongsTo(models.User, {
-          foreignKey: 'creator_id',
-        });
-        Company.belongsToMany(models.User, {
-          as: 'members',
-          through: 'memberships',
-          foreignKey: 'company_id',
-        });
-        Company.belongsToMany(models.User, {
-          as: 'admins',
-          through: 'administratings',
-          foreignKey: 'company_id',
-        });
-        Company.belongsToMany(models.User, {
-          as: 'inventoryManagers',
-          through: 'inventoryManagemehts',
-          foreignKey: 'company_id',
-        });
-        Company.belongsToMany(models.User, {
-          as: 'scheduleManagers',
-          through: 'scheduleyManagemehts',
-          foreignKey: 'company_id',
-        });
-        Company.hasMany(models.StorageLocation, {
-          as: 'storageLocations',
-          foreignKey: 'company_id',
-        });
-      },
-    },
   });
+  Company.associate = (models) => {
+    Company.belongsTo(models.User, {
+      foreignKey: 'creator_id',
+    });
+    Company.belongsToMany(models.User, {
+      as: 'members',
+      through: 'memberships',
+      foreignKey: 'company_id',
+    });
+    Company.belongsToMany(models.User, {
+      as: 'admins',
+      through: 'administratings',
+      foreignKey: 'company_id',
+    });
+    Company.belongsToMany(models.User, {
+      as: 'inventoryManagers',
+      through: 'inventoryManagements',
+      foreignKey: 'company_id',
+    });
+    Company.belongsToMany(models.User, {
+      as: 'scheduleManagers',
+      through: 'scheduleyManagemehts',
+      foreignKey: 'company_id',
+    });
+    Company.hasMany(models.StorageLocation, {
+      as: 'storageLocations',
+      foreignKey: 'company_id',
+    });
+  };
   return Company;
 };

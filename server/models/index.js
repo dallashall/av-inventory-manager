@@ -24,11 +24,13 @@ fs
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
+    console.log('Associating:', modelName);
     db[modelName].associate(db);
   }
 });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.sequelize.sync(error => console.log('sequelize sync error', error));
 
 module.exports = db;

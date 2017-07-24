@@ -1,9 +1,12 @@
-const Company = require('../models/index').Company;
+const { Company, User } = require('../models/index');
 
 module.exports = {
   create(req, res) {
     const formCompany = req.body.company;
+    console.log(req.user.user_id);
     return Company.create(formCompany)
+      .then(company => { console.log(company); company.addAdmin(1); return company; })
+      .catch(error => console.log(error))
       .then(company => res.status(201).send(company))
       .catch(error => res.status(400).send(error));
   },
@@ -28,7 +31,7 @@ module.exports = {
       .catch(error => res.status(400).send(error));
   },
   read(req, res) {
-    return Company.findById(req.params.id)
+    return Company.findById(req.params.id, {include: [{model: User, as: 'admins'}]})
       .then(
         company => res.status(201).send(company),
         error => res.status(400).send(error)

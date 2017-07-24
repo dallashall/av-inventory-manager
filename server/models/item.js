@@ -17,17 +17,14 @@ module.exports = function defineItem(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        Item.belongsTo(models.User, {
-          foreignKey: 'creator_id',
-        });
-        Item.belongsTo(models.Condition, {
-          foreignKey: 'condition_id',
-        });
-      },
-    },
   });
+  Item.associate = (models) => {
+    Item.belongsTo(models.User, {
+      foreignKey: 'creator_id',
+    });
+    Item.belongsTo(models.Condition, {
+      foreignKey: 'condition_id',
+    });
+  };
   return Item;
 };

@@ -11,15 +11,12 @@ module.exports = function defineStorageLocation(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        StorageLocation.belongsTo(models.Company, {
-          as: 'company',
-          foreignKey: 'company_id',
-        });
-      },
-    },
   });
+  StorageLocation.associate = (models) => {
+    StorageLocation.belongsTo(models.Company, {
+      as: 'company',
+      foreignKey: 'company_id',
+    });
+  };
   return StorageLocation;
 };
