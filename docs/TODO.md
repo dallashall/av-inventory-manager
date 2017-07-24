@@ -13,10 +13,10 @@
   - [x] ~~create via Google OAuth2~~
   - [x] ~~read via Google OAuth2~~
   - [ ] update contact info
-- [-] companies
+- [x] companies
   - [x] ~~create~~
   - [x] ~~read single company~~
-  - [ ] read specified companies (query pattern)
+  - [ ] read specified companies (query pattern) *requested feature*
   - [x] ~~update company info~~
   - [x] ~~destroy company~~
 - [ ] conditions
@@ -34,7 +34,7 @@
 - [ ] subscriptions
 
 ### Routes
-- [x] ~~Protect based on JWT from auth~~ (Temporarily disabled for local tests)
+- [x] ~~Protect based on JWT from auth~~
 - [ ] Protect based on subscription (integrate into initial signin)
 
 ---

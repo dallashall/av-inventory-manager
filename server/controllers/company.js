@@ -54,3 +54,5 @@ module.exports = {
       .catch(errorCB(res));
   },
 };
+
+// TODO: Add permissions
