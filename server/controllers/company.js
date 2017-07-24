@@ -1,5 +1,8 @@
 const { Company, User } = require('../models/index');
 const { errorCB, successCB } = require('./util.js');
+const mailgun = require('mailgun.js');
+
+const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY });
 
 const userHasPermission = function checkPermissions(req) {
   return req.user.adminCompanies[req.params.id];
@@ -88,6 +91,19 @@ module.exports = {
         return successCB(res)(company);
       })
       .catch(errorCB(res));
+  },
+  inviteMembers(req, res) {
+    if (!userHasPermission(req)) {
+      return errorCB(res, 403)({ message: 'Not authorized to invite new members.' });
+    }
+    mg.messages.create('dallashall.tech', {
+      from: 'USER_EMAIL_HERE',
+      to: ['RECIPIENTS_HERE'],
+      subject: 'Test Invite Email',
+      html: `<h1>User: ${req.user.user_id} has invited you to join the team!</h1>`,
+    })
+    .then(successCB(res))
+    .catch(errorCB(res));
   },
 };
 

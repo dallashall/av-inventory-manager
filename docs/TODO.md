@@ -20,6 +20,9 @@
   - [x] ~~update company info~~
   - [x] ~~destroy company~~
   - [x] add members **untested**
+  - [ ] invite members via email
+    - [x] ~~send email to potential users~~
+    - [ ] provide link for users to sign-in/signup and autmatically add to team
   - [x] add admins **untested**
   - [ ] add inventoryManagers
 - [ ] conditions
