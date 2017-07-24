@@ -19,6 +19,9 @@
   - [ ] read specified companies (query pattern) *requested feature*
   - [x] ~~update company info~~
   - [x] ~~destroy company~~
+  - [x] add members **untested**
+  - [x] add admins **untested**
+  - [ ] add inventoryManagers
 - [ ] conditions
 - [ ] events
 - [-] items

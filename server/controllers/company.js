@@ -10,7 +10,11 @@ module.exports = {
     const formCompany = req.body.company;
     console.log(req.user.user_id);
     return Company.create(formCompany)
-      .then((company) => { console.log(company); company.addAdmin(1); return company; })
+      .then((company) => {
+        console.log(company);
+        company.addAdmin(req.user.user_id);
+        return company;
+      })
       .then(successCB(res))
       .catch(errorCB(res));
   },
@@ -51,6 +55,38 @@ module.exports = {
         attributes: ['id', 'phone', 'first_name', 'email'],
       }] })
       .then(successCB(res))
+      .catch(errorCB(res));
+  },
+  addAdmin(req, res) {
+    if (!userHasPermission(req)) {
+      return errorCB(res, 403)({ message: 'Not authorized to modify administrators.' });
+    }
+    return Company.findById(req.params.id, {
+      include: [{
+        model: User,
+        as: 'admins',
+        attributes: ['id', 'phone', 'first_name', 'email'],
+      }] })
+      .then(company => {
+        company.addAdmin(req.body.admin.id);
+        return successCB(res)(company);
+      })
+      .catch(errorCB(res));
+  },
+  addMembers(req, res) {
+    if (!userHasPermission(req)) {
+      return errorCB(res, 403)({ message: 'Not authorized to modify administrators.' });
+    }
+    return Company.findById(req.params.id, {
+      include: [{
+        model: User,
+        as: 'admins',
+        attributes: ['id', 'phone', 'first_name', 'email'],
+      }] })
+      .then(company => {
+        company.addMembers(req.body.members);
+        return successCB(res)(company);
+      })
       .catch(errorCB(res));
   },
 };

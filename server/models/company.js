@@ -36,7 +36,7 @@ module.exports = function defineCompany(sequelize, DataTypes) {
     });
     Company.belongsToMany(models.User, {
       as: 'scheduleManagers',
-      through: 'scheduleyManagemehts',
+      through: 'scheduleManagemehts',
       foreignKey: 'company_id',
     });
     Company.hasMany(models.StorageLocation, {
