@@ -21,6 +21,7 @@ module.exports = (app) => {
   app.get('/api/signInWithGoogle', usersController.signupWithGoogle);
   app.get('/api/oauth2callback', usersController.receiveAuthToken);
   app.patch('/api/users', usersController.edit);
+  app.get('/api/syncPermissions', usersController.syncPermissions);
 
   app.post('/api/companies', companiesController.create);
   app.patch('/api/companies/:id', companiesController.update);

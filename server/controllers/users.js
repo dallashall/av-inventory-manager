@@ -1,10 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { User, Company } = require('../models/index');
 const google = require('googleapis');
-
-// TODO: Move to util file and require...
-const errorCB = res => error => res.status(400).send(error);
-const successCB = res => payload => res.status(201).send(payload);
+const { errorCB, successCB } = require('./util.js');
 
 const plus = google.plus('v1');
 const OAuth2 = google.auth.OAuth2;
@@ -45,10 +42,13 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken
     .spread((user, created) => {
       const token = jwt.sign({
         user_id: user.id,
-        adminCompanies: user.adminCompanies.map(co => co.id),
+        adminCompanies: user.adminCompanies.reduce((obj, co) => {
+          obj[co.id] = true;
+          return obj;
+        }, {}),
       }, process.env.JWT_SECRET);
-      console.log("token", token);
-      res.status(200).send({
+      console.log('token', token);
+      successCB(res)({
         token,
         user: {
           id: user.id,
@@ -96,4 +96,19 @@ module.exports = {
           .catch(errorCB(res)))
       .catch(errorCB(res));
   },
+  syncPermissions(req, res) {
+    const userId = req.user.user_id;
+    User.findById(userId, { include: { model: Company, as: 'adminCompanies' } })
+      .then(user => {
+        const token = jwt.sign({
+          user_id: user.id,
+          adminCompanies: user.adminCompanies.reduce((obj, co) => {
+            obj[co.id] = true;
+            return obj;
+          }, {}),
+        }, process.env.JWT_SECRET);
+        return successCB(res)({ token });
+      })
+      .catch(errorCB(res));
+  }
 };
