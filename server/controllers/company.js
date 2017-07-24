@@ -17,7 +17,7 @@ module.exports = {
   update(req, res) {
     const formCompany = req.body.company;
     if (!userHasPermission(req)) {
-      return errorCB(res)({ message: 'Not authorized to modify this company.' });
+      return errorCB(res, 403)({ message: 'Not authorized to modify this company.' });
     }
     return Company.findById(req.params.id)
       .then(
@@ -29,7 +29,7 @@ module.exports = {
   },
   destroy(req, res) {
     if (!userHasPermission(req)) {
-      return errorCB(res)({ message: 'Not authorized to delete this company.' });
+      return errorCB(res, 403)({ message: 'Not authorized to delete this company.' });
     }
     return Company.findById(req.params.id)
       .then(
@@ -42,7 +42,7 @@ module.exports = {
   },
   read(req, res) {
     if (!userHasPermission(req)) {
-      return errorCB(res)({ message: 'Not authorized to view this company. You may need to sync your permissions.' });
+      return errorCB(res, 403)({ message: 'Not authorized to view this company. You may need to sync your permissions.' });
     }
     return Company.findById(req.params.id, {
       include: [{
@@ -54,5 +54,3 @@ module.exports = {
       .catch(errorCB(res));
   },
 };
-
-// TODO: Dry up error callback
