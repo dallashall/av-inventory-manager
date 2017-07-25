@@ -42,10 +42,10 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken
     .spread((user, created) => {
       const token = jwt.sign({
         user_id: user.id,
-        adminCompanies: user.adminCompanies.reduce((obj, co) => {
+        adminCompanies: user.adminCompanies ? user.adminCompanies.reduce((obj, co) => {
           obj[co.id] = true;
           return obj;
-        }, {}),
+        }, {}) : [],
       }, process.env.JWT_SECRET);
       console.log('token', token);
       successCB(res)({
@@ -98,11 +98,18 @@ module.exports = {
   },
   syncPermissions(req, res) {
     const userId = req.user.user_id;
-    User.findById(userId, { include: { model: Company, as: 'adminCompanies' } })
+    User.findById(userId, { include: [
+      { model: Company, as: 'adminCompanies' },
+      { model: Company, as: 'companies' }
+    ] })
       .then(user => {
         const token = jwt.sign({
           user_id: user.id,
           adminCompanies: user.adminCompanies.reduce((obj, co) => {
+            obj[co.id] = true;
+            return obj;
+          }, {}),
+          companies: user.companies.reduce((obj, co) => {
             obj[co.id] = true;
             return obj;
           }, {}),

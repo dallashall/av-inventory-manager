@@ -96,7 +96,7 @@ module.exports = {
     if (!userHasPermission(req)) {
       return errorCB(res, 403)({ message: 'Not authorized to invite new members.' });
     }
-    mg.messages.create('dallashall.tech', {
+    return mg.messages.create('dallashall.tech', {
       from: 'USER_EMAIL_HERE',
       to: ['RECIPIENTS_HERE'],
       subject: 'Test Invite Email',

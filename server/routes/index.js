@@ -28,6 +28,7 @@ module.exports = (app) => {
   app.get('/api/companies/:id', companiesController.read);
   app.delete('/api/companies/:id', companiesController.destroy);
   app.post('/api/companies/:id/invite', companiesController.inviteMembers);
+  app.post('/api/companies/:id/addMembers', companiesController.addMembers);
 
   app.post('/api/items', itemsController.create);
   app.get('/api/items/:id', itemsController.read);

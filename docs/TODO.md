@@ -13,6 +13,7 @@
   - [x] ~~create via Google OAuth2~~
   - [x] ~~read via Google OAuth2~~
   - [ ] update contact info
+  - [x] ~~sync permissions~~
 - [x] companies
   - [x] ~~create~~
   - [x] ~~read single company~~
@@ -23,6 +24,7 @@
   - [ ] invite members via email
     - [x] ~~send email to potential users~~
     - [ ] provide link for users to sign-in/signup and autmatically add to team
+    - [ ] deep links for app (Android)
   - [x] add admins **untested**
   - [ ] add inventoryManagers
 - [ ] conditions
