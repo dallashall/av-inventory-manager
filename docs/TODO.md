@@ -22,9 +22,13 @@
   - [x] ~~destroy company~~
   - [x] add members **untested**
   - [ ] invite members via email
+    - [ ] automatically create join for existing members
+      - [ ] notification email? *feature request*
     - [x] ~~send email to potential users~~
     - [ ] provide link for users to sign-in/signup and autmatically add to team
-    - [ ] deep links for app (Android)
+      - [ ] generate jwt for team id
+      - [ ] use teamId jwt and userId jwt to create join
+    - [x] ~~deep links for app (Android)~~
   - [x] add admins **untested**
   - [ ] add inventoryManagers
 - [ ] conditions

@@ -11,11 +11,16 @@ module.exports = (app) => {
       '/api/signInWithGoogle',
       '/api/oauth2callback',
       '/api',
+      '/addTeamMember',
     ],
   }));
   app.get('/api', (req, res) => res.status(200).send({
     message: 'API at 100%.',
   }));
+
+  app.get('/addTeamMember', (req, res) => {
+    res.redirect(`inventorycommander://inventorycommander/${req.query.token}`);
+  });
 
   // app.post('/api/users', usersController.create);
   app.get('/api/signInWithGoogle', usersController.signupWithGoogle);
