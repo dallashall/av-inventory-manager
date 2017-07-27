@@ -1,4 +1,5 @@
 const { Company, User } = require('../models/index');
+const jwt = require('jsonwebtoken');
 const { errorCB, successCB } = require('./util.js');
 const mailgun = require('mailgun.js');
 
@@ -96,15 +97,33 @@ module.exports = {
     if (!userHasPermission(req)) {
       return errorCB(res, 403)({ message: 'Not authorized to invite new members.' });
     }
+    const token = jwt.sign({
+      company_id: req.params.id,
+      user_id: req.user.user_id,
+    }, process.env.JWT_SECRET);
+
     return mg.messages.create('dallashall.tech', {
-      from: 'USER_EMAIL_HERE',
-      to: ['RECIPIENTS_HERE'],
+      from: 'EMAIL',
+      to: [req.body.email],
       subject: 'Test Invite Email',
-      html: `<h1>User: ${req.user.user_id} has invited you to join the team!</h1>`,
+      html: `<h1>User: ${req.user.user_id} has invited you to join the team!</h1>
+            <a href="http://192.168.128.43:8000/addTeamMember?token=${token}">Click to join the team.</a>`,
     })
     .then(successCB(res))
     .catch(errorCB(res));
   },
+  addViaEmail(req, res) {
+    console.log('Adding...');
+    return Company.findById(req.user.company_id, {
+      include: [{
+        model: User,
+        as: 'admins',
+        attributes: ['id', 'phone', 'first_name', 'email'],
+      }] })
+      .then((company) => {
+        company.addMember(req.user.user_id);
+        return successCB(res)(company);
+      })
+      .catch(errorCB(res));
+  },
 };
-
-// TODO: Add permissions
