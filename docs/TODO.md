@@ -12,7 +12,7 @@
 - [-] users
   - [x] ~~create via Google OAuth2~~
   - [x] ~~read via Google OAuth2~~
-  - [ ] update contact info
+  - [x] ~~update contact info~~
   - [x] ~~sync permissions~~
 - [x] companies
   - [x] ~~create~~
@@ -24,10 +24,11 @@
   - [ ] invite members via email
     - [ ] automatically create join for existing members
       - [ ] notification email? *feature request*
+    - [ ] Store pending memberships in DB with status *feature request*
     - [x] ~~send email to potential users~~
-    - [ ] provide link for users to sign-in/signup and autmatically add to team
-      - [ ] generate jwt for team id
-      - [ ] use teamId jwt and userId jwt to create join
+    - [x] ~~provide link for users to sign-in/signup and autmatically add to team~~
+      - [x] ~~generate jwt for team id~~
+      - [x] ~~use teamId jwt and userId jwt to create join~~
     - [x] ~~deep links for app (Android)~~
   - [x] add admins **untested**
   - [ ] add inventoryManagers
