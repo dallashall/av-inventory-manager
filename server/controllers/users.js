@@ -33,7 +33,7 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken
     refresh_token: refreshToken,
     profile_img_url: googleUser.image.url,
   };
-
+  console.log('Looking for user...');
   User.findOrCreate({
     where: { email: googleUser.emails[0].value },
     defaults: newUser,

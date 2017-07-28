@@ -10,6 +10,7 @@ const userHasPermission = function checkPermissions(req) {
 };
 
 const emailInviteToUser = function emailInviteToUser(req, res, invitation) {
+  console.log('Inviting via email');
   Company.findById(req.user.company_id, {
     include: [{
       model: User,
@@ -17,7 +18,9 @@ const emailInviteToUser = function emailInviteToUser(req, res, invitation) {
       attributes: ['id', 'phone', 'first_name', 'email'],
     }] })
     .then((company) => {
+      console.log('Adding member to company');
       company.addMember(req.user.user_id);
+      console.log('Updating invitation status')
       invitation.update({ status: 'Accepted' });
       return successCB(res)(company);
     })
@@ -138,7 +141,7 @@ module.exports = {
   },
   addViaEmail(req, res) {
     console.log('Adding via email...');
-    Invitation.findOne({ where: { token: req.user.token } })
+    return Invitation.findOne({ where: { token: req.query.token } })
       .then((invitation) => {
         if(invitation.status !== 'Pending') {
           console.log('Already added invited user.');

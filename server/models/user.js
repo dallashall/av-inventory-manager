@@ -33,9 +33,9 @@ module.exports = function defineUser(sequelize, DataTypes) {
       foreignKey: 'creator_id',
       as: 'createdCompanies',
     });
-    User.hasMany(models.Company, {
-      foreignKey: 'user_id',
+    User.hasMany(models.Invitation, {
       as: 'sentInvitations',
+      foreignKey: 'user_id',
     });
     User.belongsToMany(models.Company, {
       as: 'companies',
