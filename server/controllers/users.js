@@ -102,7 +102,7 @@ module.exports = {
       { model: Company, as: 'adminCompanies' },
       { model: Company, as: 'companies' }
     ] })
-      .then(user => {
+      .then((user) => {
         const token = jwt.sign({
           user_id: user.id,
           adminCompanies: user.adminCompanies.reduce((obj, co) => {

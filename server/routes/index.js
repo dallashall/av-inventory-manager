@@ -32,7 +32,7 @@ module.exports = (app) => {
   app.patch('/api/companies/:id', companiesController.update);
   app.get('/api/companies/:id', companiesController.read);
   app.delete('/api/companies/:id', companiesController.destroy);
-  app.post('/api/companies/:id/invite', companiesController.inviteMembers);
+  app.post('/api/companies/:id/invite', companiesController.inviteViaEmail);
   app.post('/api/companies/:id/addMembers', companiesController.addMembers);
   app.get('/api/addViaEmail', companiesController.addViaEmail);
 

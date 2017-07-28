@@ -1,4 +1,4 @@
-const { Company, User } = require('../models/index');
+const { Company, User, Invitation } = require('../models/index');
 const jwt = require('jsonwebtoken');
 const { errorCB, successCB } = require('./util.js');
 const mailgun = require('mailgun.js');
@@ -7,6 +7,21 @@ const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY })
 
 const userHasPermission = function checkPermissions(req) {
   return req.user.adminCompanies[req.params.id];
+};
+
+const emailInviteToUser = function emailInviteToUser(req, res, invitation) {
+  Company.findById(req.user.company_id, {
+    include: [{
+      model: User,
+      as: 'admins',
+      attributes: ['id', 'phone', 'first_name', 'email'],
+    }] })
+    .then((company) => {
+      company.addMember(req.user.user_id);
+      invitation.update({ status: 'Accepted' });
+      return successCB(res)(company);
+    })
+    .catch(errorCB(res));
 };
 
 module.exports = {
@@ -71,7 +86,7 @@ module.exports = {
         as: 'admins',
         attributes: ['id', 'phone', 'first_name', 'email'],
       }] })
-      .then(company => {
+      .then((company) => {
         company.addAdmin(req.body.admin.id);
         return successCB(res)(company);
       })
@@ -87,13 +102,13 @@ module.exports = {
         as: 'admins',
         attributes: ['id', 'phone', 'first_name', 'email'],
       }] })
-      .then(company => {
+      .then((company) => {
         company.addMembers(req.body.members);
         return successCB(res)(company);
       })
       .catch(errorCB(res));
   },
-  inviteMembers(req, res) {
+  inviteViaEmail(req, res) {
     if (!userHasPermission(req)) {
       return errorCB(res, 403)({ message: 'Not authorized to invite new members.' });
     }
@@ -103,26 +118,33 @@ module.exports = {
     }, process.env.JWT_SECRET);
 
     return mg.messages.create('dallashall.tech', {
-      from: 'EMAIL',
+      from: 'dallas@dallashall.tech',
       to: [req.body.email],
       subject: 'Test Invite Email',
       html: `<h1>User: ${req.user.user_id} has invited you to join the team!</h1>
             <a href="http://192.168.128.43:8000/addTeamMember?token=${token}">Click to join the team.</a>`,
     })
-    .then(successCB(res))
+    .then(emailSuccess => {
+      console.log(emailSuccess);
+      Invitation.create({
+        user_id: req.user.user_id,
+        company_id: req.params.id,
+        token,
+        status: 'Pending',
+        email: req.body.email,
+      }).then(successCB(res));
+    })
     .catch(errorCB(res));
   },
   addViaEmail(req, res) {
-    console.log('Adding...');
-    return Company.findById(req.user.company_id, {
-      include: [{
-        model: User,
-        as: 'admins',
-        attributes: ['id', 'phone', 'first_name', 'email'],
-      }] })
-      .then((company) => {
-        company.addMember(req.user.user_id);
-        return successCB(res)(company);
+    console.log('Adding via email...');
+    Invitation.findOne({ where: { token: req.user.token } })
+      .then((invitation) => {
+        if(invitation.status !== 'Pending') {
+          console.log('Already added invited user.');
+          return errorCB(res)({ message: 'User already invited.' });
+        }
+        return emailInviteToUser(req, res, invitation);
       })
       .catch(errorCB(res));
   },

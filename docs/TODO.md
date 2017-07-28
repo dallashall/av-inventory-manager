@@ -17,7 +17,6 @@
 - [x] companies
   - [x] ~~create~~
   - [x] ~~read single company~~
-  - [ ] read specified companies (query pattern) *requested feature*
   - [x] ~~update company info~~
   - [x] ~~destroy company~~
   - [x] add members **untested**
