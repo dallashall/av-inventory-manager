@@ -43,6 +43,10 @@ module.exports = function defineCompany(sequelize, DataTypes) {
       as: 'storageLocations',
       foreignKey: 'company_id',
     });
+    Company.hasMany(models.Invitation, {
+      foreignKey: 'company_id',
+      as: 'inviteCompany',
+    });
   };
   return Company;
 };

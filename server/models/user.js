@@ -33,6 +33,10 @@ module.exports = function defineUser(sequelize, DataTypes) {
       foreignKey: 'creator_id',
       as: 'createdCompanies',
     });
+    User.hasMany(models.Company, {
+      foreignKey: 'user_id',
+      as: 'sentInvitations',
+    });
     User.belongsToMany(models.Company, {
       as: 'companies',
       through: 'memberships',
