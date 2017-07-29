@@ -21,9 +21,11 @@ module.exports = function defineItem(sequelize, DataTypes) {
   Item.associate = (models) => {
     Item.belongsTo(models.User, {
       foreignKey: 'creator_id',
+      as: 'user',
     });
     Item.belongsTo(models.Condition, {
       foreignKey: 'condition_id',
+      as: 'condition',
     });
   };
   return Item;
