@@ -71,13 +71,20 @@ module.exports = {
       return errorCB(res, 403)({ message: 'Not authorized to view this company. You may need to sync your permissions.' });
     }
     return Company.findById(req.params.id, {
-      include: [{
-        model: User,
-        as: 'admins',
-        attributes: ['id', 'phone', 'first_name', 'email'],
-      }] })
-      .then(successCB(res))
-      .catch(errorCB(res));
+      include: [
+        {
+          model: User,
+          as: 'admins',
+          attributes: ['id', 'phone', 'first_name', 'email'],
+        },
+        {
+          model: Invitation,
+          as: 'invites',
+          attributes: ['id', 'email', 'status', 'createdAt', 'updatedAt'],
+        }
+      ] })
+        .then(successCB(res))
+        .catch(errorCB(res));
   },
   addAdmin(req, res) {
     if (!userHasPermission(req)) {
