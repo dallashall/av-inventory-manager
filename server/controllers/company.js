@@ -20,7 +20,7 @@ const emailInviteToUser = function emailInviteToUser(req, res, invitation) {
     .then((company) => {
       console.log('Adding member to company');
       company.addMember(req.user.user_id);
-      console.log('Updating invitation status')
+      console.log('Updating invitation status');
       invitation.update({ status: 'Accepted' });
       return successCB(res)(company);
     })

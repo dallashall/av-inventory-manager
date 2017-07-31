@@ -23,7 +23,7 @@
   - [ ] invite members via email
     - [ ] automatically create join for existing members
       - [ ] notification email? *feature request*
-    - [ ] Store pending memberships in DB with status *feature request*
+    - [x] Store pending memberships in DB with status *feature request*
     - [x] ~~send email to potential users~~
     - [x] ~~provide link for users to sign-in/signup and autmatically add to team~~
       - [x] ~~generate jwt for team id~~
@@ -31,7 +31,7 @@
     - [x] ~~deep links for app (Android)~~
   - [x] add admins **untested**
   - [ ] add inventoryManagers
-- [ ] conditions
+- [x] conditions
 - [ ] events
 - [-] items
   - [-] create item
