@@ -21,8 +21,8 @@
   - [x] ~~destroy company~~
   - [x] add members **untested**
   - [ ] invite members via email
-    - [ ] automatically create join for existing members
-      - [ ] notification email? *feature request*
+    - [ ] automatically create join for existing members *security issues*
+    - [ ] notification email? *feature request*
     - [x] Store pending memberships in DB with status *feature request*
     - [x] ~~send email to potential users~~
     - [x] ~~provide link for users to sign-in/signup and autmatically add to team~~
@@ -41,7 +41,7 @@
   - [x] ~~update item info~~
   - [x] ~~destroy item~~
   - [ ] read specified items (query pattern)
-- [ ] storageLocations
+- [x] storageLocations
 - [ ] uses
 - [ ] subscriptions
 

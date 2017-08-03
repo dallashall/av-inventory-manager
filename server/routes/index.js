@@ -2,6 +2,7 @@ const {
   usersController,
   companiesController,
   itemsController,
+  locationController,
 } = require('../controllers');
 const jwt = require('express-jwt');
 
@@ -40,4 +41,10 @@ module.exports = (app) => {
   app.get('/api/items/:id', itemsController.read);
   app.patch('/api/items/:id', itemsController.update);
   app.delete('/api/items/:id', itemsController.destroy);
+
+  app.post('/api/locations', locationController.create);
+  app.get('/api/locations/:id', locationController.read);
+  app.get('/api/locations', locationController.readAll);
+  app.patch('/api/locations/:id', locationController.update);
+  app.delete('/api/locations/:id', locationController.destroy);
 };
