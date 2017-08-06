@@ -118,6 +118,22 @@ module.exports = {
       })
       .catch(errorCB(res));
   },
+  addInventoryManager(req, res) {
+    if (!userHasPermission(req)) {
+      return errorCB(res, 403)({ message: 'Not authorized to add managers.' });
+    }
+    return Company.findById(req.params.id, {
+      include: [{
+        model: User,
+        as: 'inventoryManagers',
+        attributes: ['id', 'phone', 'first_name', 'email'],
+      }] })
+      .then((company) => {
+        company.addInventoryManager(req.body.manager.id);
+        return successCB(res)(company);
+      })
+      .catch(errorCB(res));
+  },
   inviteViaEmail(req, res) {
     if (!userHasPermission(req)) {
       return errorCB(res, 403)({ message: 'Not authorized to invite new members.' });
@@ -134,7 +150,7 @@ module.exports = {
       html: `<h1>User: ${req.user.user_id} has invited you to join the team!</h1>
             <a href="http://192.168.128.43:8000/addTeamMember?token=${token}">Click to join the team.</a>`,
     })
-    .then(emailSuccess => {
+    .then((emailSuccess) => {
       console.log(emailSuccess);
       Invitation.create({
         user_id: req.user.user_id,
@@ -150,7 +166,7 @@ module.exports = {
     console.log('Adding via email...');
     return Invitation.findOne({ where: { token: req.query.token } })
       .then((invitation) => {
-        if(invitation.status !== 'Pending') {
+        if (invitation.status !== 'Pending') {
           console.log('Already added invited user.');
           return errorCB(res)({ message: 'User already invited.' });
         }

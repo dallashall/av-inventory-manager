@@ -35,6 +35,7 @@ module.exports = (app) => {
   app.delete('/api/companies/:id', companiesController.destroy);
   app.post('/api/companies/:id/invite', companiesController.inviteViaEmail);
   app.post('/api/companies/:id/addMembers', companiesController.addMembers);
+  app.post('/api/companies/:id/addInventoryManager', companiesController.addInventoryManager);
   app.get('/api/addViaEmail', companiesController.addViaEmail);
 
   app.post('/api/items', itemsController.create);
