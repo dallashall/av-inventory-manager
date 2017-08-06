@@ -122,15 +122,75 @@ module.exports = {
     if (!userHasPermission(req)) {
       return errorCB(res, 403)({ message: 'Not authorized to add managers.' });
     }
-    return Company.findById(req.params.id, {
-      include: [{
-        model: User,
-        as: 'inventoryManagers',
-        attributes: ['id', 'phone', 'first_name', 'email'],
-      }] })
+    return Company.findById(req.params.id)
       .then((company) => {
-        company.addInventoryManager(req.body.manager.id);
-        return successCB(res)(company);
+        company.addInventoryManager(req.body.manager.id)
+          .then(val => {
+            Company.findById(req.params.id, {
+              include: [{
+                model: User,
+                as: 'inventoryManagers',
+                attributes: ['id', 'phone', 'first_name', 'email'],
+              }] })
+              .then(updatedCompany => successCB(res)(updatedCompany));
+          });
+      })
+      .catch(errorCB(res));
+  },
+  removeInventoryManager(req, res) {
+    if (!userHasPermission(req)) {
+      return errorCB(res, 403)({ message: 'Not authorized to add managers.' });
+    }
+    return Company.findById(req.params.id)
+      .then((company) => {
+        company.removeInventoryManager(req.body.manager.id)
+          .then(val => {
+            Company.findById(req.params.id, {
+              include: [{
+                model: User,
+                as: 'inventoryManagers',
+                attributes: ['id', 'phone', 'first_name', 'email'],
+              }] })
+              .then(updatedCompany => successCB(res)(updatedCompany));
+          });
+      })
+      .catch(errorCB(res));
+  },
+  addScheduleManager(req, res) {
+    if (!userHasPermission(req)) {
+      return errorCB(res, 403)({ message: 'Not authorized to add managers.' });
+    }
+    return Company.findById(req.params.id)
+      .then((company) => {
+        company.addScheduleManager(req.body.manager.id)
+          .then(val => {
+            Company.findById(req.params.id, {
+              include: [{
+                model: User,
+                as: 'scheduleManagers',
+                attributes: ['id', 'phone', 'first_name', 'email'],
+              }] })
+              .then(updatedCompany => successCB(res)(updatedCompany));
+          });
+      })
+      .catch(errorCB(res));
+  },
+  removeScheduleManager(req, res) {
+    if (!userHasPermission(req)) {
+      return errorCB(res, 403)({ message: 'Not authorized to add managers.' });
+    }
+    return Company.findById(req.params.id)
+      .then((company) => {
+        company.removeScheduleManager(req.body.manager.id)
+          .then(val => {
+            Company.findById(req.params.id, {
+              include: [{
+                model: User,
+                as: 'scheduleManagers',
+                attributes: ['id', 'phone', 'first_name', 'email'],
+              }] })
+              .then(updatedCompany => successCB(res)(updatedCompany));
+          });
       })
       .catch(errorCB(res));
   },

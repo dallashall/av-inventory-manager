@@ -35,7 +35,10 @@ module.exports = (app) => {
   app.delete('/api/companies/:id', companiesController.destroy);
   app.post('/api/companies/:id/invite', companiesController.inviteViaEmail);
   app.post('/api/companies/:id/addMembers', companiesController.addMembers);
-  app.post('/api/companies/:id/addInventoryManager', companiesController.addInventoryManager);
+  app.post('/api/companies/:id/InventoryManager', companiesController.addInventoryManager);
+  app.delete('/api/companies/:id/InventoryManager', companiesController.removeInventoryManager);
+  app.post('/api/companies/:id/ScheduleManager', companiesController.addScheduleManager);
+  app.delete('/api/companies/:id/ScheduleManager', companiesController.removeScheduleManager);
   app.get('/api/addViaEmail', companiesController.addViaEmail);
 
   app.post('/api/items', itemsController.create);
