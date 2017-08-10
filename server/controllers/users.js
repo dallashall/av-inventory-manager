@@ -25,12 +25,13 @@ const googleUrl = oauth2Client.generateAuthUrl({
   scope: scopes,
 });
 
-const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken) {
+const findOrCreateUser = function findOrCreateUser(res, googleUser, tokens) {
   const newUser = {
     first_name: googleUser.name.givenName,
     last_name: googleUser.name.familyName,
     email: googleUser.emails[0].value,
-    refresh_token: refreshToken,
+    refresh_token: tokens.refresh_token,
+    access_token: tokens.access_token,
     profile_img_url: googleUser.image.url,
   };
   console.log('Looking for user...');
@@ -59,13 +60,14 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, refreshToken
     });
 };
 
-const retreiveGoogleUser = function retreiveGoogleUser(res, refreshToken) {
+const retreiveGoogleUser = function retreiveGoogleUser(res, tokens) {
+  console.log(tokens);
   plus.people.get({
     userId: 'me',
     auth: oauth2Client,
   }, (err, googleUser) => {
     console.log(googleUser);
-    return findOrCreateUser(res, googleUser, refreshToken);
+    return findOrCreateUser(res, googleUser, tokens);
   });
 };
 
@@ -80,7 +82,7 @@ module.exports = {
       if (!err) {
         console.log('Received access and refresh tokens.');
         oauth2Client.setCredentials(tokens);
-        return retreiveGoogleUser(res, tokens.refresh_token);
+        return retreiveGoogleUser(res, tokens);
       }
     });
   },

@@ -3,6 +3,7 @@ const {
   companiesController,
   itemsController,
   locationController,
+  eventController,
 } = require('../controllers');
 const jwt = require('express-jwt');
 
@@ -51,4 +52,6 @@ module.exports = (app) => {
   app.get('/api/locations', locationController.readAll);
   app.patch('/api/locations/:id', locationController.update);
   app.delete('/api/locations/:id', locationController.destroy);
+
+  app.get('/api/calendars', eventController.listCalendars);
 };

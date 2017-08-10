@@ -15,6 +15,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
+      calendar_id: {
+        type: Sequelize.STRING,
+      },
       description: {
         type: Sequelize.TEXT,
       },

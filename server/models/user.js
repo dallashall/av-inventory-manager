@@ -20,6 +20,10 @@ module.exports = function defineUser(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    access_token: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     profile_img_url: {
       type: DataTypes.STRING,
     },

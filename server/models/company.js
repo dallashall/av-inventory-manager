@@ -8,6 +8,9 @@ module.exports = function defineCompany(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    calendar_id: {
+      type: DataTypes.STRING,
+    },
     description: {
       type: DataTypes.TEXT,
     },

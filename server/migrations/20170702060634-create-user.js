@@ -22,6 +22,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      access_token: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       phone: {
         type: Sequelize.INTEGER,
       },

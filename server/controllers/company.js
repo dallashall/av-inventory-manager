@@ -47,7 +47,7 @@ module.exports = {
     }
     return Company.findById(req.params.id)
       .then(
-        oldCompany => oldCompany.update(formCompany, { fields: ['name', 'description', 'logo_url'] })
+        oldCompany => oldCompany.update(formCompany, { fields: ['name', 'description', 'logo_url', 'calendar_id'] })
           .then(successCB(res))
           .catch(errorCB(res))
       )
