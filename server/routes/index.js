@@ -54,4 +54,5 @@ module.exports = (app) => {
   app.delete('/api/locations/:id', locationController.destroy);
 
   app.get('/api/calendars', eventController.listCalendars);
+  app.post('/api/calendars', eventController.createEvent);
 };
