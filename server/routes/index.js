@@ -55,4 +55,5 @@ module.exports = (app) => {
 
   app.get('/api/calendars', eventController.listCalendars);
   app.post('/api/calendars', eventController.createEvent);
+  app.patch('/api/calendars', eventController.updateEvent);
 };

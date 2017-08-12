@@ -49,7 +49,33 @@ const createEvent = function createEvent(req, res) {
             event_id: event.id,
           };
           return Event.create(appEvent)
-            .then(successCB(res))
+            .then(() => successCB(res)(event))
+            .catch(errorCB(res));
+        })
+      );
+      return authAccessCalendar(req, calendarAccessCallback);
+    })
+    .catch(errorCB(res));
+};
+
+const updateEvent = function updateEvent(req, res) {
+  const formEvent = req.body.event;
+  if (!userHasPermission(req)) {
+    return errorCB(res, 403)({ message: 'Not authorized to create events for this company' });
+  }
+  return Company.findById(req.body.company_id)
+    .then((company) => {
+      console.log(company);
+      formEvent.calendarId = company.calendar_id;
+      const calendarAccessCallback = () => (
+        calendar.events.patch(formEvent, (err, event) => {
+          if (err) { return errorCB(res)(err); }
+          const appEvent = {
+            calendar_id: company.calendar_id,
+            event_id: event.id,
+          };
+          return Event.create(appEvent)
+            .then(() => successCB(res)(event))
             .catch(errorCB(res));
         })
       );
@@ -61,4 +87,5 @@ const createEvent = function createEvent(req, res) {
 module.exports = {
   listCalendars,
   createEvent,
+  updateEvent,
 };
