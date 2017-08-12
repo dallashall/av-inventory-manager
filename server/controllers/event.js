@@ -39,7 +39,6 @@ const createEvent = function createEvent(req, res) {
   }
   return Company.findById(req.body.company_id)
     .then((company) => {
-      console.log(company);
       formEvent.calendarId = company.calendar_id;
       const calendarAccessCallback = () => (
         calendar.events.insert(formEvent, (err, event) => {
@@ -65,7 +64,6 @@ const updateEvent = function updateEvent(req, res) {
   }
   return Company.findById(req.body.company_id)
     .then((company) => {
-      console.log(company);
       formEvent.calendarId = company.calendar_id;
       const calendarAccessCallback = () => (
         calendar.events.patch(formEvent, (err, event) => {
