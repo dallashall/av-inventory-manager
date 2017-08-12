@@ -57,6 +57,31 @@ const createEvent = function createEvent(req, res) {
     .catch(errorCB(res));
 };
 
+const removeEvent = function removeEvent(req, res) {
+  const formEvent = req.body.event;
+  if (!userHasPermission(req)) {
+    return errorCB(res, 403)({ message: 'Not authorized to create events for this company' });
+  }
+  return Company.findById(req.body.company_id)
+    .then((company) => {
+      formEvent.calendarId = company.calendar_id;
+      const calendarAccessCallback = () => (
+        calendar.events.delete(formEvent, (err, event) => {
+          if (err) { return errorCB(res)(err); }
+          const appEvent = {
+            calendar_id: company.calendar_id,
+            event_id: formEvent.eventId,
+          };
+          return Event.findOne({ where: appEvent })
+            .then(() => successCB(res)(appEvent))
+            .catch(errorCB(res));
+        })
+      );
+      return authAccessCalendar(req, calendarAccessCallback);
+    })
+    .catch(errorCB(res));
+};
+
 const updateEvent = function updateEvent(req, res) {
   const formEvent = req.body.event;
   if (!userHasPermission(req)) {
@@ -68,13 +93,7 @@ const updateEvent = function updateEvent(req, res) {
       const calendarAccessCallback = () => (
         calendar.events.patch(formEvent, (err, event) => {
           if (err) { return errorCB(res)(err); }
-          const appEvent = {
-            calendar_id: company.calendar_id,
-            event_id: event.id,
-          };
-          return Event.create(appEvent)
-            .then(() => successCB(res)(event))
-            .catch(errorCB(res));
+          return successCB(res)(event);
         })
       );
       return authAccessCalendar(req, calendarAccessCallback);
@@ -86,4 +105,5 @@ module.exports = {
   listCalendars,
   createEvent,
   updateEvent,
+  removeEvent,
 };
