@@ -1,6 +1,6 @@
 module.exports = {
   up(queryInterface, Sequelize) {
-    return queryInterface.createTable('Events', {
+    queryInterface.createTable('Events', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -24,6 +24,14 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
+    queryInterface.addIndex(
+      'Events',
+      ['calendar_id', 'event_id'],
+      {
+        indexName: 'CalendarEventIndex',
+        indicesType: 'UNIQUE',
+      }
+    );
   },
   down(queryInterface, Sequelize) {
     return queryInterface.dropTable('Events');

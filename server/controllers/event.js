@@ -101,9 +101,45 @@ const updateEvent = function updateEvent(req, res) {
     .catch(errorCB(res));
 };
 
+const pullEvents = function pullEvents(req, res) {
+  const params = {
+    singleEvents: true,
+    timeMax: new Date(Date.now() + (1000 * 60 * 60 * 24 * req.body.days)).toISOString(),
+    timeMin: new Date().toISOString(),
+  };
+  if (!userHasPermission(req)) {
+    return errorCB(res, 403)({ message: 'Not authorized to pull events for this company' });
+  }
+  return Company.findById(req.body.company_id)
+  .then((company) => {
+    params.calendarId = company.calendar_id;
+    const calendarAccessCallback = () => (
+      calendar.events.list(params, (err, events) => {
+        if (err) { console.log(err); return errorCB(res)(err); }
+        const pulledEvents = events.items.map(event => (
+          {
+            calendar_id: params.calendarId,
+            event_id: event.id,
+          }));
+        console.log(pulledEvents);
+        return Promise.all(
+          pulledEvents.map((event) => {
+            new Promise(() => Event.upsert(event));
+          })
+        )
+          .then(() => successCB(res)({ message: "Success!" }))
+          .catch(errorCB(res));
+      })
+    );
+    return authAccessCalendar(req, calendarAccessCallback);
+  })
+  .catch(errorCB(res));
+};
+
 module.exports = {
   listCalendars,
   createEvent,
   updateEvent,
   removeEvent,
+  pullEvents,
 };

@@ -57,4 +57,5 @@ module.exports = (app) => {
   app.post('/api/calendars', eventController.createEvent);
   app.patch('/api/calendars', eventController.updateEvent);
   app.delete('/api/calendars', eventController.removeEvent);
+  app.post('/api/calendars/pull', eventController.pullEvents);
 };

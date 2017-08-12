@@ -8,7 +8,16 @@ module.exports = function defineEvent(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
-  });
+  },
+    {
+      indexes: [
+        {
+          unique: true,
+          fields: ['calendar_id', 'event_id'],
+        },
+      ],
+    }
+  );
   Event.associate = (models) => {
     Event.belongsToMany(models.User, {
       as: 'volunteers',
