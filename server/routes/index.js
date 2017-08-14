@@ -58,6 +58,6 @@ module.exports = (app) => {
   app.patch('/api/calendars', eventController.updateEvent);
   app.delete('/api/calendars', eventController.removeEvent);
   app.post('/api/calendars/pull', eventController.pullEvents);
-  app.post('/api/calendars/volunteer', eventController.volunteer);
-  app.delete('/api/calendars/volunteer', eventController.unVolunteer);
+  app.post('/api/calendars/volunteer', eventController.volunteer(true));
+  app.delete('/api/calendars/volunteer', eventController.volunteer(false));
 };

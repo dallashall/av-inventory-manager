@@ -105,65 +105,45 @@ const updateEvent = function updateEvent(req, res) {
     .catch(errorCB(res));
 };
 
-const volunteer = function volunteer(req, res) {
+const volunteer = (add) => (req, res) => {
   if (!userIsCompanyMember(req)) {
     return errorCB(res, 403)({ message: 'Not a member of this company' });
   }
+  const formEvent = { event_id: req.body.event_id };
   return Company.findById(req.body.company_id)
-    .then(company => Event.findOne({
-      where: {
-        event_id: req.body.event_id,
-        calendar_id: company.calendar_id,
-      },
-      include: [
-        {
-          model: User,
-          as: 'volunteers',
-          attributes: ['id', 'phone', 'first_name', 'email'],
-        },
-      ],
-    })
+    .then((company) => {
+      formEvent.calendar_id = company.calendar_id;
+      const eventLookupInfo = {
+        where: formEvent,
+        include: [
+          {
+            model: User,
+            as: 'volunteers',
+            attributes: ['id', 'phone', 'first_name', 'email'],
+          },
+        ],
+      };
+      return Event.findOne(eventLookupInfo)
       .then((event) => {
         if (event) {
-          event.addVolunteer(req.user.user_id);
-          return successCB(res)(event);
+          if (add) {
+            return event.addVolunteer(req.user.user_id)
+              .then(() => Event.findOne(eventLookupInfo)
+                .then(successCB(res))
+                .catch(errorCB(res)))
+              .catch(errorCB(res));
+          } else {
+            return event.removeVolunteer(req.user.user_id)
+              .then(() => Event.findOne(eventLookupInfo)
+                .then(successCB(res))
+                .catch(errorCB(res)))
+              .catch(errorCB(res));
+          }
         }
         return errorCB(res, 404)({ message: "Event not found" });
       })
       .catch((err) => { console.log(err); return errorCB(res)(err); })
-    )
-    .catch(errorCB(res));
-};
-
-// Could easily be DRY
-// Curry with a switch variable to choose whether to delete or add...
-const unVolunteer = function unVolunteer(req, res) {
-  if (!userIsCompanyMember(req)) {
-    return errorCB(res, 403)({ message: 'Not a member of this company' });
-  }
-  return Company.findById(req.body.company_id)
-    .then(company => Event.findOne({
-      where: {
-        event_id: req.body.event_id,
-        calendar_id: company.calendar_id,
-      },
-      include: [
-        {
-          model: User,
-          as: 'volunteers',
-          attributes: ['id', 'phone', 'first_name', 'email'],
-        },
-      ],
     })
-      .then((event) => {
-        if (event) {
-          event.removeVolunteer(req.user.user_id);
-          return successCB(res)(event);
-        }
-        return errorCB(res, 404)({ message: "Event not found" });
-      })
-      .catch((err) => { console.log(err); return errorCB(res)(err); })
-    )
     .catch(errorCB(res));
 };
 
@@ -209,5 +189,4 @@ module.exports = {
   removeEvent,
   pullEvents,
   volunteer,
-  unVolunteer,
 };
