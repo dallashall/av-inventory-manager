@@ -31,7 +31,7 @@ module.exports = function defineEvent(sequelize, DataTypes) {
     });
     Event.belongsToMany(models.Item, {
       as: 'items',
-      through: models.Use,
+      through: 'itemEvents',
       foreignKey: 'event_id',
     });
   };

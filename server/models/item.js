@@ -27,6 +27,11 @@ module.exports = function defineItem(sequelize, DataTypes) {
       foreignKey: 'condition_id',
       as: 'condition',
     });
+    Item.belongsToMany(models.Event, {
+      foreignKey: 'item_id',
+      through: 'itemEvents',
+      as: 'events',
+    });
   };
   return Item;
 };

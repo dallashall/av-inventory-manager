@@ -1,5 +1,5 @@
 const google = require('googleapis');
-const { User, Company, Event } = require('../models/index');
+const { User, Company, Event, Item } = require('../models/index');
 const { errorCB, successCB } = require('./util');
 
 const OAuth2 = google.auth.OAuth2;
@@ -147,6 +147,57 @@ const volunteer = add => (req, res) => {
     .catch(errorCB(res));
 };
 
+const inventory = add => (req, res) => {
+  if (!userIsCompanyMember(req)) {
+    return errorCB(res, 403)({ message: 'Not authorized to assign users to this company' });
+  }
+  const formEvent = { event_id: req.body.event_id };
+  return Company.findById(req.body.company_id)
+    .then((company) => {
+      formEvent.calendar_id = company.calendar_id;
+      const eventLookupInfo = {
+        where: formEvent,
+        include: [
+          {
+            model: User,
+            as: 'volunteers',
+            attributes: ['id', 'phone', 'first_name', 'email'],
+          },
+          {
+            model: User,
+            as: 'assignedUsers',
+            attributes: ['id', 'phone', 'first_name', 'email'],
+          },
+          {
+            model: Item,
+            as: 'items',
+          },
+        ],
+      };
+      return Event.findOne(eventLookupInfo)
+      .then((event) => {
+        if (event) {
+          if (add) {
+            return event.addItem(req.body.item_id)
+              .then(() => Event.findOne(eventLookupInfo)
+                .then(successCB(res))
+                .catch(errorCB(res)))
+              .catch(errorCB(res));
+          } else {
+            return event.removeItem(req.body.item_id)
+              .then(() => Event.findOne(eventLookupInfo)
+                .then(successCB(res))
+                .catch(errorCB(res)))
+              .catch(errorCB(res));
+          }
+        }
+        return errorCB(res, 404)({ message: 'Event not found' });
+      })
+      .catch((err) => { console.log(err); return errorCB(res)(err); })
+    })
+    .catch(errorCB(res));
+};
+
 const assign = add => (req, res) => {
   if (!userHasPermission(req)) {
     return errorCB(res, 403)({ message: 'Not authorized to assign users to this company' });
@@ -237,4 +288,5 @@ module.exports = {
   pullEvents,
   volunteer,
   assign,
+  inventory,
 };
