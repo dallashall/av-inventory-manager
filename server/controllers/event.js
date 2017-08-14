@@ -15,6 +15,10 @@ const userHasPermission = function checkPermissions(req) {
   return req.user.adminCompanies[req.body.company_id];
 };
 
+const userIsCompanyMember = function userIsCompanyMember(req) {
+  return req.user.companies[req.body.company_id];
+};
+
 const authAccessCalendar = function authAccessCalendar(req, calendarAccessCallback) {
   User.findById(req.user.user_id).then((user) => {
     oauth2Client.setCredentials({
@@ -101,6 +105,68 @@ const updateEvent = function updateEvent(req, res) {
     .catch(errorCB(res));
 };
 
+const volunteer = function volunteer(req, res) {
+  if (!userIsCompanyMember(req)) {
+    return errorCB(res, 403)({ message: 'Not a member of this company' });
+  }
+  return Company.findById(req.body.company_id)
+    .then(company => Event.findOne({
+      where: {
+        event_id: req.body.event_id,
+        calendar_id: company.calendar_id,
+      },
+      include: [
+        {
+          model: User,
+          as: 'volunteers',
+          attributes: ['id', 'phone', 'first_name', 'email'],
+        },
+      ],
+    })
+      .then((event) => {
+        if (event) {
+          event.addVolunteer(req.user.user_id);
+          return successCB(res)(event);
+        }
+        return errorCB(res, 404)({ message: "Event not found" });
+      })
+      .catch((err) => { console.log(err); return errorCB(res)(err); })
+    )
+    .catch(errorCB(res));
+};
+
+// Could easily be DRY
+// Curry with a switch variable to choose whether to delete or add...
+const unVolunteer = function unVolunteer(req, res) {
+  if (!userIsCompanyMember(req)) {
+    return errorCB(res, 403)({ message: 'Not a member of this company' });
+  }
+  return Company.findById(req.body.company_id)
+    .then(company => Event.findOne({
+      where: {
+        event_id: req.body.event_id,
+        calendar_id: company.calendar_id,
+      },
+      include: [
+        {
+          model: User,
+          as: 'volunteers',
+          attributes: ['id', 'phone', 'first_name', 'email'],
+        },
+      ],
+    })
+      .then((event) => {
+        if (event) {
+          event.removeVolunteer(req.user.user_id);
+          return successCB(res)(event);
+        }
+        return errorCB(res, 404)({ message: "Event not found" });
+      })
+      .catch((err) => { console.log(err); return errorCB(res)(err); })
+    )
+    .catch(errorCB(res));
+};
+
 const pullEvents = function pullEvents(req, res) {
   const params = {
     singleEvents: true,
@@ -142,4 +208,6 @@ module.exports = {
   updateEvent,
   removeEvent,
   pullEvents,
+  volunteer,
+  unVolunteer,
 };
