@@ -25,7 +25,7 @@ module.exports = function defineEvent(sequelize, DataTypes) {
       foreignKey: 'event_id',
     });
     Event.belongsToMany(models.User, {
-      as: 'assignedEvents',
+      as: 'assignedUsers',
       through: 'assignments',
       foreignKey: 'event_id',
     });

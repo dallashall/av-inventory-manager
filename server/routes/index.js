@@ -60,4 +60,6 @@ module.exports = (app) => {
   app.post('/api/calendars/pull', eventController.pullEvents);
   app.post('/api/calendars/volunteer', eventController.volunteer(true));
   app.delete('/api/calendars/volunteer', eventController.volunteer(false));
+  app.post('/api/calendars/assign', eventController.assign(true));
+  app.delete('/api/calendars/assign', eventController.assign(false));
 };
