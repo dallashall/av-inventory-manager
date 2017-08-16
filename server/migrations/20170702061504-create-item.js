@@ -20,6 +20,12 @@ module.exports = {
       condition_id: {
         type: Sequelize.INTEGER,
       },
+      location_id: {
+        type: Sequelize.INTEGER,
+      },
+      home_id: {
+        type: Sequelize.INTEGER,
+      },
       creator_id: {
         allowNull: false,
         type: Sequelize.INTEGER,

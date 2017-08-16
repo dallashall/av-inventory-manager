@@ -71,14 +71,6 @@ module.exports = function defineUser(sequelize, DataTypes) {
       through: 'assignments',
       foreignKey: 'user_id',
     });
-    User.hasMany(models.Use, {
-      as: 'checkouts',
-      foreignKey: 'checkout_person_id',
-    });
-    User.hasMany(models.Use, {
-      as: 'checkins',
-      foreignKey: 'checkin_person_id',
-    });
   };
   return User;
 };

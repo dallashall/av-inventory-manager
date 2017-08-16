@@ -10,8 +10,11 @@ module.exports = function defineItem(sequelize, DataTypes) {
     unique_num: {
       type: DataTypes.INTEGER,
     },
+    location_id: {
+      type: DataTypes.INTEGER,
+    },
     condition_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
     },
     creator_id: {
       type: DataTypes.INTEGER,
@@ -23,14 +26,22 @@ module.exports = function defineItem(sequelize, DataTypes) {
       foreignKey: 'creator_id',
       as: 'user',
     });
-    Item.belongsTo(models.Condition, {
-      foreignKey: 'condition_id',
-      as: 'condition',
-    });
     Item.belongsToMany(models.Event, {
       foreignKey: 'item_id',
       through: 'itemEvents',
       as: 'events',
+    });
+    Item.belongsTo(models.StorageLocation, {
+      foreignKey: 'location_id',
+      as: 'location',
+    });
+    Item.belongsTo(models.StorageLocation, {
+      foreignKey: 'home_id',
+      as: 'home',
+    });
+    Item.belongsTo(models.Condition, {
+      foreignKey: 'condition_id',
+      as: 'condition',
     });
   };
   return Item;

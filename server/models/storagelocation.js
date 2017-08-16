@@ -17,6 +17,14 @@ module.exports = function defineStorageLocation(sequelize, DataTypes) {
       as: 'company',
       foreignKey: 'company_id',
     });
+    StorageLocation.hasMany(models.Item, {
+      as: 'items',
+      foreignKey: 'location_id',
+    });
+    StorageLocation.hasMany(models.Item, {
+      as: 'home_items',
+      foreignKey: 'home_id',
+    });
   };
   return StorageLocation;
 };

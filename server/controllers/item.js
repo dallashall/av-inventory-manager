@@ -30,7 +30,7 @@ module.exports = {
     return Item.findById(req.params.id)
       .then(
         oldItem => oldItem.update(formItem, {
-          fields: ['name', 'desc', 'condition_id'],
+          fields: ['name', 'desc', 'condition_id', 'location_id', 'home_id'],
         })
           .then(item => findSingleItem(item.id).then(successCB(res)))
           .catch(errorCB(res))
