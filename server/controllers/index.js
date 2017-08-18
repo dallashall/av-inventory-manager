@@ -3,6 +3,7 @@ const companiesController = require('./company');
 const itemsController = require('./item');
 const locationController = require('./storage_location');
 const eventController = require('./event');
+const conditionController = require('./condition');
 
 module.exports = {
   usersController,
@@ -10,4 +11,5 @@ module.exports = {
   itemsController,
   locationController,
   eventController,
+  conditionController,
 };
