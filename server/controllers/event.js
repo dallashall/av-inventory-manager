@@ -149,7 +149,7 @@ const volunteer = add => (req, res) => {
 
 const inventory = add => (req, res) => {
   if (!userIsCompanyMember(req)) {
-    return errorCB(res, 403)({ message: 'Not authorized to assign users to this company' });
+    return errorCB(res, 403)({ message: 'Not authorized to manage inventory for this event.' });
   }
   const formEvent = { event_id: req.body.event_id };
   return Company.findById(req.body.company_id)
