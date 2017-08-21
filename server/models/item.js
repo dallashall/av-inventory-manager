@@ -16,6 +16,10 @@ module.exports = function defineItem(sequelize, DataTypes) {
     condition_id: {
       type: DataTypes.INTEGER,
     },
+    company_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     creator_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -42,6 +46,10 @@ module.exports = function defineItem(sequelize, DataTypes) {
     Item.belongsTo(models.Condition, {
       foreignKey: 'condition_id',
       as: 'condition',
+    });
+    Item.belongsTo(models.Company, {
+      foreignKey: 'company_id',
+      as: 'company',
     });
   };
   return Item;

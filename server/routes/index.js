@@ -44,6 +44,7 @@ module.exports = (app) => {
   app.get('/api/addViaEmail', companiesController.addViaEmail);
 
   app.post('/api/items', itemsController.create);
+  app.get('/api/items', itemsController.index);
   app.get('/api/items/:id', itemsController.read);
   app.patch('/api/items/:id', itemsController.update);
   app.delete('/api/items/:id', itemsController.destroy);

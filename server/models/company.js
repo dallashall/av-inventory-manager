@@ -50,6 +50,10 @@ module.exports = function defineCompany(sequelize, DataTypes) {
       foreignKey: 'company_id',
       as: 'invites',
     });
+    Company.hasMany(models.Item, {
+      foreignKey: 'company_id',
+      as: 'items',
+    });
   };
   return Company;
 };

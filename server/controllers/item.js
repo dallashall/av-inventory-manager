@@ -1,4 +1,4 @@
-const { Item, Condition } = require('../models/index');
+const { Item, Condition, Company } = require('../models/index');
 
 const errorCB = res => error => res.status(400).send(error);
 const successCB = res => payload => res.status(201).send(payload);
@@ -42,6 +42,29 @@ module.exports = {
       .then(item => {
         item.destroy();
         return successCB(res)(item);
+      })
+      .catch(errorCB(res));
+  },
+  index(req, res) {
+    const where = {};
+    if (req.query.name) {
+      where.name = { $iLike: req.query.name };
+    }
+    if (req.query.condition) {
+      where.condition_id = { $in: req.query.condition };
+    }
+    console.log(where);
+    return Company.findById(req.query.company_id, {
+      include: [
+        {
+          model: Item,
+          as: 'items',
+          where
+        },
+      ],
+    })
+      .then((company) => {
+        successCB(res)(company.items);
       })
       .catch(errorCB(res));
   },
