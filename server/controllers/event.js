@@ -272,12 +272,65 @@ const pullEvents = function pullEvents(req, res) {
           })
         )
           .then(() => successCB(res)({ message: "Success!" }))
-          .catch(errorCB(res));
+          .catch(errorCB(res)); // Replace map with forEach
       })
     );
     return authAccessCalendar(req, calendarAccessCallback);
   })
   .catch(errorCB(res));
+};
+
+const availableInventory = function availableInventory(req, res) {
+  // if (!userIsCompanyMember(req)) { return errorCB(res, 401)({ message: 'Not a member of company' }); }
+  const timeMin = req.query.timeMin;
+  const timeMax = req.query.timeMax;
+  const params = {
+    singleEvents: true,
+    timeMax,
+    timeMin,
+  };
+  return Company.findById(req.query.company_id)
+    .then((company) => {
+      params.calendarId = company.calendar_id;
+      console.log(params);
+      const calendarAccessCallback = () => {
+        calendar.events.list(params, (err, gCalEvents) => {
+          console.log('error', err);
+          if (err) { console.log(err); return errorCB(res)(err); }
+          console.log(gCalEvents);
+          const eventIds = gCalEvents.items.map(gCalEvent => gCalEvent.id);
+          console.log('event ids:', eventIds);
+          return Event.findAll({
+            where: {
+              event_id: {
+                $in: eventIds,
+              },
+            },
+            include: [{
+              model: Item,
+              as: 'items',
+            }],
+          })
+          .then((events) => {
+            console.log('events', events);
+            const itemIds = events.map(event => event.items).reduce((a, b) => a.concat(b), []);
+            console.log('Item Ids:', itemIds);
+            return Item.findAll({
+              where: {
+                id: {
+                  $notIn: itemIds.map(item => item.id),
+                },
+              },
+            })
+            .then(successCB(res))
+            .catch(err => {console.log(err); errorCB(res)(err);});
+          })
+          .catch(errorCB(res));
+        });
+      };
+      return authAccessCalendar(req, calendarAccessCallback);
+    })
+    .catch(errorCB(res));
 };
 
 module.exports = {
@@ -289,4 +342,5 @@ module.exports = {
   volunteer,
   assign,
   inventory,
+  availableInventory,
 };
