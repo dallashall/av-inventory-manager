@@ -1,5 +1,5 @@
 const google = require('googleapis');
-const { User, Company, Event, Item } = require('../models/index');
+const { User, Company, Event, Item, Condition } = require('../models/index');
 const { errorCB, successCB } = require('./util');
 
 const OAuth2 = google.auth.OAuth2;
@@ -50,9 +50,13 @@ const createEvent = function createEvent(req, res) {
           const appEvent = {
             calendar_id: company.calendar_id,
             event_id: event.id,
+            start_time: event.start.dateTime,
+            end_time: event.end.dateTime,
+            summary: event.summary,
+            description: event.description,
           };
           return Event.create(appEvent)
-            .then(() => successCB(res)(event))
+            .then(newEvent => successCB(res)(newEvent))
             .catch(errorCB(res));
         })
       );
@@ -64,20 +68,25 @@ const createEvent = function createEvent(req, res) {
 const removeEvent = function removeEvent(req, res) {
   const formEvent = req.body.event;
   if (!userHasPermission(req)) {
-    return errorCB(res, 403)({ message: 'Not authorized to create events for this company' });
+    return errorCB(res, 403)({ message: 'Not authorized to destroy events for this company' });
   }
   return Company.findById(req.body.company_id)
     .then((company) => {
       formEvent.calendarId = company.calendar_id;
+      console.log('formEvent', formEvent);
       const calendarAccessCallback = () => (
         calendar.events.delete(formEvent, (err, event) => {
-          if (err) { return errorCB(res)(err); }
+          if (err) { console.log(err); return errorCB(res)(err); }
           const appEvent = {
             calendar_id: company.calendar_id,
             event_id: formEvent.eventId,
           };
           return Event.findOne({ where: appEvent })
-            .then(() => successCB(res)(appEvent))
+            .then((oldEvent) => {
+              console.log('oldEvent', oldEvent);
+              oldEvent.destroy();
+              successCB(res)(oldEvent);
+            })
             .catch(errorCB(res));
         })
       );
@@ -97,7 +106,20 @@ const updateEvent = function updateEvent(req, res) {
       const calendarAccessCallback = () => (
         calendar.events.patch(formEvent, (err, event) => {
           if (err) { return errorCB(res)(err); }
-          return successCB(res)(event);
+          return Event.findOne({ where: { event_id: event.id, calendar_id: company.calendar_id } })
+            .then((oldEvent) => {
+              console.log(oldEvent);
+              return oldEvent.update({
+                event_id: event.id,
+                start_time: event.start.dateTime,
+                end_time: event.end.dateTime,
+                summary: event.summary,
+                description: event.description,
+              })
+              .then(successCB(res))
+              .catch(errorCB(res));
+            })
+            .catch(errorCB(res));
         })
       );
       return authAccessCalendar(req, calendarAccessCallback);
@@ -259,11 +281,16 @@ const pullEvents = function pullEvents(req, res) {
     params.calendarId = company.calendar_id;
     const calendarAccessCallback = () => (
       calendar.events.list(params, (err, events) => {
+        console.log('events', events.items[0].start);
         if (err) { console.log(err); return errorCB(res)(err); }
         const pulledEvents = events.items.map(event => (
           {
             calendar_id: params.calendarId,
             event_id: event.id,
+            start_time: event.start.dateTime,
+            end_time: event.end.dateTime,
+            summary: event.summary,
+            description: event.description,
           }));
         console.log(pulledEvents);
         return Promise.all(
@@ -271,7 +298,7 @@ const pullEvents = function pullEvents(req, res) {
             new Promise(() => Event.upsert(event));
           })
         )
-          .then(() => successCB(res)({ message: "Success!" }))
+          .then(() => successCB(res)({ message: 'Success!' }))
           .catch(errorCB(res)); // Replace map with forEach
       })
     );
@@ -293,42 +320,35 @@ const availableInventory = function availableInventory(req, res) {
     .then((company) => {
       params.calendarId = company.calendar_id;
       console.log(params);
-      const calendarAccessCallback = () => {
-        calendar.events.list(params, (err, gCalEvents) => {
-          console.log('error', err);
-          if (err) { console.log(err); return errorCB(res)(err); }
-          console.log(gCalEvents);
-          const eventIds = gCalEvents.items.map(gCalEvent => gCalEvent.id);
-          console.log('event ids:', eventIds);
-          return Event.findAll({
+      Item.findAll({
+        include: [
+          {
+            model: Event,
+            as: 'events',
+            required: false,
+            attributes: [],
             where: {
-              event_id: {
-                $in: eventIds,
+              $not: {
+                $or: [
+                  {
+                    end_time: { $gt: timeMin, $lte: timeMax },
+                  },
+                  {
+                    start_time: { $lt: timeMax, $gte: timeMin },
+                  },
+                  {
+                    start_time: { $lte: timeMin },
+                    end_time: { $gte: timeMax },
+                  },
+                ],
               },
             },
-            include: [{
-              model: Item,
-              as: 'items',
-            }],
-          })
-          .then((events) => {
-            console.log('events', events);
-            const itemIds = events.map(event => event.items).reduce((a, b) => a.concat(b), []);
-            console.log('Item Ids:', itemIds);
-            return Item.findAll({
-              where: {
-                id: {
-                  $notIn: itemIds.map(item => item.id),
-                },
-              },
-            })
-            .then(successCB(res))
-            .catch(err => {console.log(err); errorCB(res)(err);});
-          })
-          .catch(errorCB(res));
-        });
-      };
-      return authAccessCalendar(req, calendarAccessCallback);
+          },
+          { model: Condition, as: 'condition' },
+        ],
+      })
+      .then(successCB(res))
+      .catch((err) => { console.log(err); return errorCB(res)(err); });
     })
     .catch(errorCB(res));
 };

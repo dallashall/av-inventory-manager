@@ -8,6 +8,18 @@ module.exports = function defineEvent(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    summary: {
+      type: DataTypes.TEXT,
+    },
+    description: {
+      type: DataTypes.TEXT,
+    },
+    start_time: {
+      type: DataTypes.DATE,
+    },
+    end_time: {
+      type: DataTypes.DATE,
+    },
   },
     {
       indexes: [

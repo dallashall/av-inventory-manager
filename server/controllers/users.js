@@ -49,12 +49,13 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, tokens) {
         }, {}) : [],
       }, process.env.JWT_SECRET);
       console.log('token', token);
+      console.log('user', user);
       successCB(res)({
         token,
-        user: {
+        currentUser: {
           id: user.id,
           displayName: `${user.first_name} ${user.last_name}`,
-          profile_img_url: user.profile_image_url,
+          profileImgUrl: user.profile_img_url,
         },
       });
     });
