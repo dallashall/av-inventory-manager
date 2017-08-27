@@ -353,14 +353,58 @@ const availableInventory = function availableInventory(req, res) {
     .catch(errorCB(res));
 };
 
+const assignedEvents = function assignedEvents(req, res) {
+  return User.findById(req.user.user_id)
+    .then((user) => {
+      user.getAssignedEvents({ where: { start_time: { $gte: new Date(Date.now() - (1000 * 60 * 60 * 24)) } } })
+        .then(successCB(res))
+        .catch(errorCB(res));
+    })
+    .catch(errorCB(res));
+};
+
+const readEvent = function readEvent(req, res) {
+  return Company.findById(req.query.company_id).then((company) => {
+    return Event.findOne({
+      where: {
+        calendar_id: company.calendar_id,
+        id: req.query.id,
+      },
+    })
+    .then(successCB(res))
+    .catch(errorCB(res));
+  })
+  .catch(errorCB(res));
+};
+
+const companyEvents = function companyEvents(req, res) {
+  return Company.findById(req.query.company_id)
+    .then((company) => {
+      return Event.findAll({
+        where: {
+          calendar_id: company.calendar_id,
+          start_time: {
+            $gte: new Date(Date.now() - (3600 * 1000 * 24)),
+          },
+        },
+      })
+      .then(successCB(res))
+      .catch(errorCB(res));
+    })
+    .catch(errorCB(res));
+};
+
 module.exports = {
   listCalendars,
   createEvent,
   updateEvent,
   removeEvent,
+  readEvent,
+  companyEvents,
   pullEvents,
   volunteer,
   assign,
   inventory,
   availableInventory,
+  assignedEvents,
 };

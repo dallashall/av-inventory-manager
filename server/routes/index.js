@@ -73,4 +73,7 @@ module.exports = (app) => {
   app.post('/api/calendars/inventory', eventController.inventory(true));
   app.delete('/api/calendars/inventory', eventController.inventory(false));
   app.get('/api/calendars/availableInventory', eventController.availableInventory);
+  app.get('/api/calendars/myEvents', eventController.assignedEvents);
+  app.get('/api/calendars/event', eventController.assignedEvents);
+  app.get('/api/calendars/events', eventController.companyEvents);
 };
