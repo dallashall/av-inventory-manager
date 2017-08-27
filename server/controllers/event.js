@@ -368,7 +368,7 @@ const readEvent = function readEvent(req, res) {
     return Event.findOne({
       where: {
         calendar_id: company.calendar_id,
-        id: req.query.id,
+        id: req.query.event_id,
       },
     })
     .then(successCB(res))
