@@ -24,6 +24,9 @@ module.exports = {
       summary: {
         type: Sequelize.TEXT,
       },
+      location: {
+        type: Sequelize.STRING,
+      },
       end_time: {
         type: Sequelize.DATE,
       },

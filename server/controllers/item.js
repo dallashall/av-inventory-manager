@@ -1,4 +1,4 @@
-const { Item, Condition, Company } = require('../models/index');
+const { Item, Condition, Company, Event } = require('../models/index');
 
 const errorCB = res => error => res.status(400).send(error);
 const successCB = res => payload => res.status(201).send(payload);
@@ -67,5 +67,25 @@ module.exports = {
         successCB(res)(company.items);
       })
       .catch(errorCB(res));
+  },
+  lastEvent(req, res) {
+    return Event.findAll({
+      where: {
+        start_time: {
+          $lte: Date.now(),
+        },
+      },
+      order: [['start_time', 'DESC']],
+      limit: 1,
+      include: [{
+        model: Item,
+        as: 'items',
+        where: {
+          id: req.params.id,
+        },
+      }],
+    })
+    .then(successCB(res))
+    .catch(err => {console.log(err); errorCB(res);});
   },
 };

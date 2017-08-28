@@ -14,6 +14,9 @@ module.exports = function defineEvent(sequelize, DataTypes) {
     description: {
       type: DataTypes.TEXT,
     },
+    location: {
+      type: DataTypes.STRING,
+    },
     start_time: {
       type: DataTypes.DATE,
     },

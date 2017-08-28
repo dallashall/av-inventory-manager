@@ -46,6 +46,7 @@ module.exports = (app) => {
   app.post('/api/items', itemsController.create);
   app.get('/api/items', itemsController.index);
   app.get('/api/items/:id', itemsController.read);
+  app.get('/api/items/:id/lastEvent', itemsController.lastEvent);
   app.patch('/api/items/:id', itemsController.update);
   app.delete('/api/items/:id', itemsController.destroy);
 

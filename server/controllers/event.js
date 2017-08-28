@@ -1,5 +1,5 @@
 const google = require('googleapis');
-const { User, Company, Event, Item, Condition } = require('../models/index');
+const { User, Company, Event, Item, Condition, StorageLocation } = require('../models/index');
 const { errorCB, successCB } = require('./util');
 
 const OAuth2 = google.auth.OAuth2;
@@ -54,6 +54,7 @@ const createEvent = function createEvent(req, res) {
             end_time: event.end.dateTime,
             summary: event.summary,
             description: event.description,
+            location: event.location,
           };
           return Event.create(appEvent)
             .then(newEvent => successCB(res)(newEvent))
@@ -115,6 +116,7 @@ const updateEvent = function updateEvent(req, res) {
                 end_time: event.end.dateTime,
                 summary: event.summary,
                 description: event.description,
+                location: event.location,
               })
               .then(successCB(res))
               .catch(errorCB(res));
@@ -291,6 +293,7 @@ const pullEvents = function pullEvents(req, res) {
             end_time: event.end.dateTime,
             summary: event.summary,
             description: event.description,
+            location: event.location,
           }));
         console.log(pulledEvents);
         return Promise.all(
@@ -370,6 +373,22 @@ const readEvent = function readEvent(req, res) {
         calendar_id: company.calendar_id,
         id: req.query.event_id,
       },
+      include: [
+        {
+          model: User,
+          as: 'assignedUsers',
+          attributes: ['email', 'first_name', 'last_name', 'id', 'phone', 'profile_img_url'],
+        },
+        {
+          model: Item,
+          as: 'items',
+          include: [
+            { model: Condition, as: 'condition' },
+            { model: StorageLocation, as: 'location' },
+            { model: StorageLocation, as: 'home' },
+          ],
+        },
+      ],
     })
     .then(successCB(res))
     .catch(errorCB(res));
