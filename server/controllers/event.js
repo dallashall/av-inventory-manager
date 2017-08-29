@@ -151,11 +151,12 @@ const volunteer = add => (req, res) => {
       .then((event) => {
         if (event) {
           if (add) {
-            return event.addVolunteer(req.user.user_id)
+            console.log(req.body.status);
+            return event.addVolunteers([req.user.user_id], { through: { status: req.body.status } })
               .then(() => Event.findOne(eventLookupInfo)
                 .then(successCB(res))
                 .catch(errorCB(res)))
-              .catch(errorCB(res));
+              .catch(err => {console.log(err['0']); return errorCB(res)(err);});
           } else {
             return event.removeVolunteer(req.user.user_id)
               .then(() => Event.findOne(eventLookupInfo)
@@ -359,7 +360,9 @@ const availableInventory = function availableInventory(req, res) {
 const assignedEvents = function assignedEvents(req, res) {
   return User.findById(req.user.user_id)
     .then((user) => {
-      user.getAssignedEvents({ where: { start_time: { $gte: new Date(Date.now() - (1000 * 60 * 60 * 24)) } } })
+      user.getAssignedEvents({ where: {
+        start_time: { $gte: new Date(Date.now() - (1000 * 60 * 60 * 24)) },
+      } })
         .then(successCB(res))
         .catch(errorCB(res));
     })
@@ -377,6 +380,11 @@ const readEvent = function readEvent(req, res) {
         {
           model: User,
           as: 'assignedUsers',
+          attributes: ['email', 'first_name', 'last_name', 'id', 'phone', 'profile_img_url'],
+        },
+        {
+          model: User,
+          as: 'volunteers',
           attributes: ['email', 'first_name', 'last_name', 'id', 'phone', 'profile_img_url'],
         },
         {

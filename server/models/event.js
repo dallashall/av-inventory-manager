@@ -36,12 +36,12 @@ module.exports = function defineEvent(sequelize, DataTypes) {
   Event.associate = (models) => {
     Event.belongsToMany(models.User, {
       as: 'volunteers',
-      through: 'volunteering',
+      through: models.Volunteering,
       foreignKey: 'event_id',
     });
     Event.belongsToMany(models.User, {
       as: 'assignedUsers',
-      through: 'assignments',
+      through: models.Assignments,
       foreignKey: 'event_id',
     });
     Event.belongsToMany(models.Item, {

@@ -63,12 +63,12 @@ module.exports = function defineUser(sequelize, DataTypes) {
     });
     User.belongsToMany(models.Event, {
       as: 'potentialEvents',
-      through: 'volunteering',
+      through: models.Volunteering,
       foreignKey: 'user_id',
     });
     User.belongsToMany(models.Event, {
       as: 'assignedEvents',
-      through: 'assignments',
+      through: models.Assignments,
       foreignKey: 'user_id',
     });
   };
