@@ -16,8 +16,8 @@ const userHasPermission = function checkPermissions(req) {
 };
 
 const userIsCompanyMember = function userIsCompanyMember(req) {
-  // return req.user.companies[req.body.company_id];
-  return true;
+  return req.user.companies[req.body.company_id];
+  // return true;
 };
 
 const authAccessCalendar = function authAccessCalendar(req, calendarAccessCallback) {
@@ -171,7 +171,7 @@ const volunteer = add => (req, res) => {
               .then(() => Event.findOne(eventLookupInfo)
                 .then(successCB(res))
                 .catch(errorCB(res)))
-              .catch(err => {console.log(err['0']); return errorCB(res)(err);});
+              .catch(err => { console.log(err['0']); return errorCB(res)(err); });
           } else {
             return event.removeVolunteer(req.user.user_id)
               .then(() => Event.findOne(eventLookupInfo)
@@ -265,7 +265,7 @@ const assign = add => (req, res) => {
       .then((event) => {
         if (event) {
           if (add) {
-            return event.addAssignedUser(req.body.user_id)
+            return event.addAssignedUser(req.body.user_id, { through: { status: 'Unconfirmed' } })
               .then(() => Event.findOne(eventLookupInfo)
                 .then(successCB(res))
                 .catch(errorCB(res)))
@@ -278,9 +278,9 @@ const assign = add => (req, res) => {
               .catch(errorCB(res));
           }
         }
-        return errorCB(res, 404)({ message: "Event not found" });
+        return errorCB(res, 404)({ message: 'Event not found' });
       })
-      .catch((err) => { console.log(err); return errorCB(res)(err); })
+      .catch((err) => { console.log(err); return errorCB(res)(err); });
     })
     .catch(errorCB(res));
 };
