@@ -38,7 +38,10 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, tokens) {
   User.findOrCreate({
     where: { email: googleUser.emails[0].value },
     defaults: newUser,
-    include: { model: Company, as: 'adminCompanies' },
+    include: [
+      { model: Company, as: 'adminCompanies' },
+      { model: Company, as: 'companies', attributes: ['id', 'name', 'logo_url'] },
+    ],
   })
     .spread((user, created) => {
       const token = jwt.sign({
@@ -56,6 +59,9 @@ const findOrCreateUser = function findOrCreateUser(res, googleUser, tokens) {
           id: user.id,
           displayName: `${user.first_name} ${user.last_name}`,
           profileImgUrl: user.profile_img_url,
+          email: user.email,
+          phone: user.phone,
+          companies: user.companies,
         },
       });
     });
@@ -92,10 +98,20 @@ module.exports = {
     const userData = req.body.user;
     console.log("userData", userData);
     console.log("userId", userId);
-    User.findById(userId)
+    User.findById(userId, { include: { model: Company, as: 'companies', attributes: ['id', 'name', 'logo_url'] } })
       .then(
         oldUser => oldUser.update(userData, { fields: ['phone'] })
-          .then(successCB(res))
+          .then((user) => {
+            const currentUser = {
+              id: user.id,
+              displayName: `${user.first_name} ${user.last_name}`,
+              profileImgUrl: user.profile_img_url,
+              email: user.email,
+              phone: user.phone,
+              companies: user.companies,
+            };
+            successCB(res)({ currentUser });
+          })
           .catch(errorCB(res)))
       .catch(errorCB(res));
   },
